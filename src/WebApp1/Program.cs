@@ -1,5 +1,5 @@
+using Infrastructure.Identity.Users;
 using Infrastructure.Persistence;
-using Infrastructure.Security.Users;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 });
     
 
-builder.Services.AddIdentityCore<User>(options =>
+builder.Services.AddIdentityCore<AppUser>(options =>
 {
     
 }).AddEntityFrameworkStores<ApplicationDbContext>();
