@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using WebApp1;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 });
     
 
-builder.Services.AddIdentityCore<AppUser>(options =>
-{
+builder.Services.AddIdentityCore<AppUser>(options => {
     
 }).AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -29,6 +30,7 @@ builder.Services.AddApplicationServices();
 
 
 var app = builder.Build();
+app.SeedApplicationData();
 
 
 

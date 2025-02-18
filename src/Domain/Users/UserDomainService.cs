@@ -10,10 +10,6 @@ public class UserDomainService : IUserDomainService
 
     public async Task<User?> GetUserById(int userId) {
         var user = await _userManager.GetUserByIdAsync(userId);
-        if (user == null) return new User
-        {
-            Name = "Not Found",
-        };
-        return new User { Name = "hELLO" };
+        return user;
     }
 }

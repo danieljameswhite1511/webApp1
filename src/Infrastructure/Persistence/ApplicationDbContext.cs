@@ -5,11 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
+public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<int>, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : base(options)
     {
         
     }
+    
+    
 }

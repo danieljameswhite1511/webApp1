@@ -1,0 +1,18 @@
+﻿[
+  {
+     "UserName" : "Dan"
+    ,"NormalizedUserName" : "Dan"
+    ,"Email" : "dan@fam.com"
+    ,"NormalizedEmail" : "dan@fam.jam"
+    ,"EmailConfirmed" : false
+    ,"PasswordHash" : null
+    ,"SecurityStamp" : null
+    ,"ConcurrencyStamp" : null
+    ,"PhoneNumber" : null
+    ,"PhoneNumberConfirmed" : false
+    ,"TwoFactorEnabled" : false
+    ,"LockoutEnd" : null
+    ,"LockoutEnabled" : false
+    ,"AccessFailedCount" : 0
+  }
+]

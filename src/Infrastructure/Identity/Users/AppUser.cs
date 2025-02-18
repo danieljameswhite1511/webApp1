@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Identity.Users;
 
-public class AppUser : IdentityUser<Guid>
+public class AppUser : IdentityUser<int>
 {
     
 }
