@@ -1,11 +1,18 @@
+using Application.ServiceCollectionExtensions;
 using Infrastructure.Identity.Users;
 using Infrastructure.Persistence;
+using Infrastructure.ServiceCollectionExtension;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("default"));
@@ -16,6 +23,10 @@ builder.Services.AddIdentityCore<AppUser>(options =>
 {
     
 }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddInfrastructureServices();
+builder.Services.AddApplicationServices();
+
 
 var app = builder.Build();
 
