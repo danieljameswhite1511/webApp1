@@ -16,6 +16,8 @@ public static class WebApplicationExtensions
         dbContext.Database.EnsureCreated();
 
         if (!dbContext.Users.Any()) {
+            //dbContext.Users.RemoveRange(dbContext.Users);
+            //dbContext.SaveChanges();
             SeedData.SeedUsers(dbContext);
         }
         

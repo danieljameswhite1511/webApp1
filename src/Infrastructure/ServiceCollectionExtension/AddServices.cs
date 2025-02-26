@@ -1,7 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using Domain.Entities;
+﻿using Domain.auth;
 using Domain.Repositories;
 using Domain.Users;
+using Infrastructure.Identity.Auth;
 using Infrastructure.Identity.Users;
 using Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,5 +15,6 @@ public static class InfrastructureServices
         services.AddScoped<IUserManager<User, int>, AppUserManager>();
         services.AddScoped(typeof(IRepository<,>), typeof(GenericRepository<,>));
         services.AddScoped<IUserDomainService, UserDomainService>();
+        services.AddScoped<ITokenService, TokenService>();
     }
 }

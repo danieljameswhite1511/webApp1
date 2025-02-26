@@ -1,7 +1,9 @@
+using System.Text;
 using Application.ServiceCollectionExtensions;
 using Infrastructure.Identity.Users;
 using Infrastructure.Persistence;
 using Infrastructure.ServiceCollectionExtension;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,11 +24,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
     
 
 builder.Services.AddIdentityCore<AppUser>(options => {
-    
-}).AddEntityFrameworkStores<ApplicationDbContext>();
+    options.User.RequireUniqueEmail = true;
+    options.Password.RequiredLength = 8;
+}).AddEntityFrameworkStores<ApplicationDbContext>().AddUserValidator<UserEmailValidator>();
 
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options => { options.TokenValidationParameters = new TokenValidationParameters {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("SecretKey")))
+        };
+    });
 
 
 var app = builder.Build();
@@ -45,6 +57,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

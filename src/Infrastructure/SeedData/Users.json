@@ -14,5 +14,37 @@
     ,"LockoutEnd" : null
     ,"LockoutEnabled" : false
     ,"AccessFailedCount" : 0
-  }
+  },
+  {
+    "UserName" : "Dank"
+  ,"NormalizedUserName" : "Dank"
+  ,"Email" : "dank@fam.com"
+  ,"NormalizedEmail" : "dank@fam.jam"
+  ,"EmailConfirmed" : false
+  ,"PasswordHash" : null
+  ,"SecurityStamp" : null
+  ,"ConcurrencyStamp" : null
+  ,"PhoneNumber" : null
+  ,"PhoneNumberConfirmed" : false
+  ,"TwoFactorEnabled" : false
+  ,"LockoutEnd" : null
+  ,"LockoutEnabled" : false
+  ,"AccessFailedCount" : 0
+  },
+  {
+  "UserName" : "Daniel"
+,"NormalizedUserName" : "Daniel"
+,"Email" : "daniel@fam.com"
+,"NormalizedEmail" : "daniel@fam.jam"
+,"EmailConfirmed" : false
+,"PasswordHash" : null
+,"SecurityStamp" : null
+,"ConcurrencyStamp" : null
+,"PhoneNumber" : null
+,"PhoneNumberConfirmed" : false
+,"TwoFactorEnabled" : false
+,"LockoutEnd" : null
+,"LockoutEnabled" : false
+,"AccessFailedCount" : 0
+}
 ]
