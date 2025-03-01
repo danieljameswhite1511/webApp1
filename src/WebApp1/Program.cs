@@ -5,6 +5,7 @@ using Infrastructure.Persistence;
 using Infrastructure.ServiceCollectionExtension;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 builder.Services.AddIdentityCore<AppUser>(options => {
     options.User.RequireUniqueEmail = true;
     options.Password.RequiredLength = 8;
-}).AddEntityFrameworkStores<ApplicationDbContext>().AddUserValidator<UserEmailValidator>();
+    options.SignIn.RequireConfirmedAccount = false;
+    
+}).AddEntityFrameworkStores<ApplicationDbContext>().AddUserValidator<UserEmailValidator>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
@@ -43,8 +47,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 app.SeedApplicationData();
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

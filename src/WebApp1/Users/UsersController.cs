@@ -29,20 +29,24 @@ public class UsersController : ControllerBase{
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAll()
-    {
+    public async Task<IActionResult> GetAll() {
         return Ok(await _userAppService.GetUsers());
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
-    {
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto) {
         
         var createUserResult = await _userAppService.CreateUser(createUserDto);
-
         if (!createUserResult.Succeeded) return BadRequest(createUserResult.Errors);
-        
         return Ok(createUserResult.Value);
+    }
+
+    [HttpGet(), Route("verify/{userId?}/{token?}")]
+    
+    public async Task<IActionResult> VerifyUser([FromQuery] int userId, [FromQuery] string token) {
+        var result = await _userAppService.ValidateUserEmailToken(userId, token);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        return Ok(result.Value);
     }
 
 }
