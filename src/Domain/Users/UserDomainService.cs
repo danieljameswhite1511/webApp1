@@ -17,16 +17,19 @@ public class UserDomainService : IUserDomainService
         var user = await _userManager.GetUserByIdAsync(userId);
         return user;
     }
+
+    public async Task<User?> GetUserByEmail(string email) {
+        return await _userManager.GetUserByEmailAsync(email);
+    }
+    
     public async Task<List<User>?> GetUsers() {
         return await _userManager.GetUsersAsync();
     }
-    public Task<IResult<User>> ConfirmEmailAsync(int userId, string code)
-    {
+    public Task<IResult<User>> ConfirmEmailAsync(int userId, string code) {
         return _userManager.ConfirmEmailAsync(userId, code);
     }
 
-    public Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId)
-    {
+    public Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId) {
         return _userManager.GenerateEmailConfirmationTokenAsync(userId);
     }
 }

@@ -15,9 +15,7 @@ public class UsersController : ControllerBase{
     private readonly IUserAppService _userAppService;
 
     public UsersController(ILogger<UsersController> logger
-        , IUserAppService userAppService
-        )
-    {
+        , IUserAppService userAppService) {
         _logger = logger;
         _userAppService = userAppService;
     }
@@ -35,18 +33,23 @@ public class UsersController : ControllerBase{
 
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto) {
-        
         var createUserResult = await _userAppService.CreateUser(createUserDto);
         if (!createUserResult.Succeeded) return BadRequest(createUserResult.Errors);
         return Ok(createUserResult.Value);
     }
 
     [HttpGet(), Route("verify/{userId?}/{token?}")]
-    
     public async Task<IActionResult> VerifyUser([FromQuery] int userId, [FromQuery] string token) {
         var result = await _userAppService.ValidateUserEmailToken(userId, token);
         if (!result.Succeeded) return BadRequest(result.Errors);
-        return Ok(result.Value);
+        return Ok();
     }
 
+    [HttpGet, Route("sendVerificationEmail/{email?}")]
+    public async Task<IActionResult> SendVerificationEmail([FromQuery] string? email)
+    {
+        var result = await _userAppService.SendEmailConfirmationToken(email);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        return Ok();
+    }
 }

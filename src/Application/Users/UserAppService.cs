@@ -43,7 +43,7 @@ public class UserAppService : IUserAppService {
         }).ToList();
     }
 
-    public async Task<IResult<CreateUserDto>> CreateUser(CreateUserDto createUserDto) {
+    public async Task<IResult<UserDto>> CreateUser(CreateUserDto createUserDto) {
         var user = new User {
             Email = createUserDto.Email,
             Password = createUserDto.Password,
@@ -51,39 +51,67 @@ public class UserAppService : IUserAppService {
 
         var userCreateResult = await _userDomainService.CreateUserAsync(user);
         if (!userCreateResult.Succeeded) 
-            return Result<CreateUserDto>.Failed(userCreateResult.Errors);
+            return Result<UserDto>.Failed(userCreateResult.Errors);
 
-        var userConfirmationToken = await _userDomainService.GenerateEmailConfirmationTokenAsync(user.Id);
+        user = userCreateResult.Value;
+       
+        var emailConfirmationResult = await SendEmailConfirmationToken(user);
         
-        if (userConfirmationToken.Succeeded) {
-
-            var urlParams = new Dictionary<string, string>() {
-                { "userId", user.Id.ToString() },
-                { "token", userConfirmationToken.Value }
-            };
-            var uri =_uriBuilderService.CreateConfiguredUri("/api/users/verify", urlParams);
-            await _notification.Send(user.Email, user.Email, uri);
-        }else {
-            return Result<CreateUserDto>.Failed(userConfirmationToken.Errors);
+        if (!emailConfirmationResult.Succeeded) {
+            return Result<UserDto>.Failed(emailConfirmationResult.Errors);
         }
-        
-        return Result<CreateUserDto>.Success(createUserDto);
+
+        var userDto = new UserDto {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email
+
+        };
+        return Result<UserDto>.Success(userDto);
+    }
+
+    public async Task<IResult> SendEmailConfirmationToken(int userId)
+    {
+        var user = await _userDomainService.GetUserById(userId);
+        if (user == null) return Result<User>.Failed();
+        return await SendEmailConfirmationToken(user);
     }
     
-    public async Task<IResult<string>> CreateToken(UserDto userDto) {
+    public async Task<IResult> SendEmailConfirmationToken(string email)
+    {
+        var user = await _userDomainService.GetUserByEmail(email);
+        if (user == null) return Result<User>.Failed();
+        return await SendEmailConfirmationToken(user);
+    }
+    public async Task<IResult> SendEmailConfirmationToken(User user)
+    {
+        var userConfirmationToken = await _userDomainService.GenerateEmailConfirmationTokenAsync(user.Id);
+
+        if (!userConfirmationToken.Succeeded) return Result.Failed(userConfirmationToken.Errors);
+       
+        var urlParams = new Dictionary<string, string>() {
+            { "userId", user.Id.ToString() },
+            { "token", userConfirmationToken.Value }
+        };
+        var uri =_uriBuilderService.CreateConfiguredUri("/api/users/verify", urlParams);
+        await _notification.Send(user.Email, user.Email, uri);
+        return Result.Success();
+
+    }
+    public async Task<IResult> CreateToken(UserDto userDto) {
         var user = await _userDomainService.GetUserById(userDto.Id);
         if (user == null) return Result<string>.Failed("User not found");
         return Result<string>.Success(_tokenService.GenerateToken(user));
     }
 
-    public async Task<IResult<bool>> ValidateUserEmailToken(int userId,  string token)
+    public async Task<IResult> ValidateUserEmailToken(int userId,  string token)
     {
         var result = await _userDomainService.ConfirmEmailAsync(userId, token);
         if (!result.Succeeded)
         {
-            return Result<bool>.Failed(result.Errors);
+            return Result.Failed(result.Errors);
         }
         
-        return Result<bool>.Success(true);
+        return Result.Success();
     }
 }

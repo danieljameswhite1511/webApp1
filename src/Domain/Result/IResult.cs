@@ -1,9 +1,11 @@
 ﻿namespace Domain.Result;
 
-public interface IResult<T>
+public interface IResult
 {
     bool Succeeded { get; set; }
     string[]? Errors { get; set; }
+}
+public interface IResult<T> : IResult {
     T Value { get; set; }
     
 }

@@ -31,7 +31,19 @@ public class AppUserManager : IUserManager<User, int> {
         var appUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Id.Equals(id));
         if (appUser == null) return null;
         return new User {
+            Id = appUser.Id,
+            Email = appUser.Email,
             Name = appUser?.UserName,
+        };
+    }
+
+    public async Task<User?> GetUserByEmailAsync(string email) {
+        var appUser = await _userManager.FindByEmailAsync(email);
+        if (appUser == null) return null;
+        return new User {
+            Id = appUser.Id,
+            Name = appUser.UserName,
+            Email = appUser.Email,
         };
     }
 
@@ -42,6 +54,7 @@ public class AppUserManager : IUserManager<User, int> {
             Name = x.UserName
         }).ToList();
     }
+
     public async Task<IResult<User>> ConfirmEmailAsync(int userId, string code) {
         var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
         if (appUser == null) return Result<User>.Failed("User not found");
