@@ -10,3 +10,5 @@ clean architecture
 asp,net identity
 serilog
 cookie and jwt auth
+optimistic concurrency
+audit log/exception log in nosql db
