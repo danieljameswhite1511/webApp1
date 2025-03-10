@@ -9,3 +9,4 @@ Dynamic themes and ofcourse "Dark Mode" :)
 clean architecture
 asp,net identity
 serilog
+cookie and jwt auth
