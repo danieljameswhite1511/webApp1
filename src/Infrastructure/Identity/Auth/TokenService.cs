@@ -17,7 +17,7 @@ public class TokenService : ITokenService
         _secretKey = System.Text.Encoding.UTF8.GetBytes(_configuration["SecretKey"]);
     } 
     
-    public string GenerateToken(User user)
+    public string GenerateToken(IUser user)
     {
         var claims = new List<Claim> {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),

@@ -1,5 +1,7 @@
-﻿using Domain.Result;
+﻿using Domain.auth;
+using Domain.Result;
 using Domain.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,9 +9,15 @@ namespace Infrastructure.Identity.Users;
 
 public class AppUserManager : IUserManager<User, int> {
     private readonly UserManager<AppUser> _userManager;
+    private readonly ITokenService _tokenService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    
 
-    public AppUserManager(UserManager<AppUser> userManager) {
+    public AppUserManager(UserManager<AppUser> userManager, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
+    {
         _userManager = userManager;
+        _tokenService = tokenService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<IResult<User>> CreateUserAsync(User user){
@@ -69,6 +77,27 @@ public class AppUserManager : IUserManager<User, int> {
         var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
         if (appUser == null) return Result<string>.Failed("User not found");
         var token= await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+        return Result<string>.Success(token);
+    }
+
+    public async Task<IResult> SignInSpaAsync(string email, string password) {
+        var appuser = await _userManager.FindByEmailAsync(email);
+        if (appuser == null) return Result.Failed("User not found");
+        if(!appuser.EmailConfirmed) return Result.Failed("Email confirmation required");
+        var passwordValid = await _userManager.CheckPasswordAsync(appuser, password);
+        if(!passwordValid) return Result.Failed("Invalid password");
+        var token = _tokenService.GenerateToken(appuser);
+        _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", token);
+        return Result.Success();
+    }
+
+    public async Task<IResult<string>> SignInApiAsync(string email, string password) {
+        var appuser = await _userManager.FindByEmailAsync(email);
+        if (appuser == null) return Result<string>.Failed("User not found");
+        if(!appuser.EmailConfirmed) return Result<string>.Failed("Email confirmation required");
+        var passwordValid = await _userManager.CheckPasswordAsync(appuser, password);
+        if(!passwordValid) return Result<string>.Failed("Invalid password");
+        var token = _tokenService.GenerateToken(appuser);
         return Result<string>.Success(token);
     }
 }

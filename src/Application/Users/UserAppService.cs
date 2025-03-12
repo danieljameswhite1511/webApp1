@@ -83,6 +83,17 @@ public class UserAppService : IUserAppService {
         if (user == null) return Result<User>.Failed();
         return await SendEmailConfirmationToken(user);
     }
+
+    public async Task<IResult> SignInSpaAsync(SignInDto signInDto)
+    {
+        return await _userDomainService.SignInSpaAsync(signInDto.Email, signInDto.Password);
+    }
+
+    public async Task<IResult<string>> SignInApiAsync(SignInDto signInDto)
+    {
+        return await _userDomainService.SignInApiAsync(signInDto.Email, signInDto.Password);
+    }
+
     public async Task<IResult> SendEmailConfirmationToken(User user)
     {
         var userConfirmationToken = await _userDomainService.GenerateEmailConfirmationTokenAsync(user.Id);

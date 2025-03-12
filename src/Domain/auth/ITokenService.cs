@@ -4,5 +4,5 @@ namespace Domain.auth;
 
 public interface ITokenService
 {
-    string GenerateToken(User user);
+    string GenerateToken(IUser user);
 }

@@ -32,6 +32,7 @@ builder.Services.AddIdentityCore<AppUser>(options => {
 }).AddEntityFrameworkStores<ApplicationDbContext>().AddUserValidator<UserEmailValidator>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

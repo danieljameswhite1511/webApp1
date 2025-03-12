@@ -13,4 +13,7 @@ public interface IUserAppService {
     Task<IResult> SendEmailConfirmationToken(User user);
     Task<IResult> SendEmailConfirmationToken(int userId);
     Task<IResult> SendEmailConfirmationToken(string email);
+    
+    Task<IResult> SignInSpaAsync(SignInDto signInDto);
+    Task<IResult<string>> SignInApiAsync(SignInDto signInDto);
 }

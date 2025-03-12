@@ -52,4 +52,12 @@ public class UsersController : ControllerBase{
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok();
     }
+
+    [HttpPost, Route("sign-in")]
+    public async Task<IActionResult> SignInAsync([FromBody] SignInDto signInDto)
+    {
+        var result = await _userAppService.SignInApiAsync(signInDto);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        return Ok(result.Value);
+    }
 }

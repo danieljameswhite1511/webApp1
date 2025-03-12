@@ -9,4 +9,6 @@ public interface IUserDomainService {
     Task<List<User>?> GetUsers();
     Task<IResult<User>> ConfirmEmailAsync(int userId, string code);
     Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId);
+    Task<IResult> SignInSpaAsync(string email, string password);
+    Task<IResult<string>> SignInApiAsync(string email, string password);
 }

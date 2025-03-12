@@ -29,7 +29,18 @@ public class UserDomainService : IUserDomainService
         return _userManager.ConfirmEmailAsync(userId, code);
     }
 
-    public Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId) {
-        return _userManager.GenerateEmailConfirmationTokenAsync(userId);
+    public async Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId) {
+        return await _userManager.GenerateEmailConfirmationTokenAsync(userId);
+    }
+
+    public async Task<IResult> SignInSpaAsync(string email, string password)
+    {
+        var result = await _userManager.SignInSpaAsync(email, password);
+        return result;
+    }
+
+    public async Task<IResult<string>> SignInApiAsync(string email, string password)
+    {
+        return await _userManager.SignInApiAsync(email, password);
     }
 }

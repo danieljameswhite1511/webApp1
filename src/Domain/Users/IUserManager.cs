@@ -10,4 +10,6 @@ public interface IUserManager<TUser, TPrimaryKey> where TUser : IEntity<TPrimary
     Task<List<TUser>?> GetUsersAsync();
     Task<IResult<TUser>> ConfirmEmailAsync(TPrimaryKey userId, string code);
     Task<IResult<string>> GenerateEmailConfirmationTokenAsync(TPrimaryKey userId);
+    Task<IResult> SignInSpaAsync(string email, string password);
+    Task<IResult<string>> SignInApiAsync(string email, string password);
 }
