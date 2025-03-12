@@ -12,8 +12,9 @@ public class AppUserManager : IUserManager<User, int> {
     private readonly ITokenService _tokenService;
     private readonly IHttpContextAccessor _httpContextAccessor;
     
-
-    public AppUserManager(UserManager<AppUser> userManager, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
+    public AppUserManager(UserManager<AppUser> userManager
+        , ITokenService tokenService
+        , IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _tokenService = tokenService;
