@@ -24,10 +24,4 @@
 
     
 
-    <ItemGroup>
-      <Folder Include="client-react\src\auth\" />
-    </ItemGroup>
-
-    
-
 </Project>

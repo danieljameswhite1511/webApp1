@@ -1,0 +1,24 @@
+﻿.menu-container {
+  .menu{
+    position: relative;
+    margin: 5px;
+    .menu-icon{
+      cursor: pointer;
+    }
+    .menu-body{
+      display: none;
+      a{
+        display: block;
+      }
+    }
+    &:hover .menu-body{
+      position: absolute;
+      top: 100%;
+      right: 0;
+      
+      display: block;
+    }
+  }
+  
+;
+}
