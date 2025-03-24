@@ -6,7 +6,10 @@ export default function Header() {
     return (
         <div className="header">
             <div className="left">
-                wa1{location.pathname}    
+                <span className="wa1">wa1</span>
+                <span className="wa1-path">
+                    {location.pathname}
+                </span>
             </div>
             <div className="right">
                 <Menu></Menu>

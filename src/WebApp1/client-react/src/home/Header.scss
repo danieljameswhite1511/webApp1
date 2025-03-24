@@ -5,6 +5,15 @@
   align-items: center;
   .left{
     display: flex;
+    padding: 10px;
+    span{
+    }
+    .wa1{
+      font-size: 20px;
+    }
+    .wa1-path{
+      font-size: 20px;
+    }
   }
   .right{
     display: flex;

@@ -1,0 +1,19 @@
+﻿.button-component button{
+  border-radius: 5px;
+  border: 1px solid green;
+  height: 30px;
+  span{
+    padding: 5px 10px;
+  }
+  &:hover{
+    background-color: green;
+    cursor: pointer;
+    color: black;
+  }
+  
+  &:active{
+    background-color: rebeccapurple;  
+  }
+  
+  
+}

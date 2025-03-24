@@ -1,0 +1,13 @@
+﻿.input-component{
+  margin: 5px;
+  input{
+    border : 1px solid rebeccapurple;
+    padding : 5px;
+    border-radius : 2px;
+    &:hover, &:focus{
+      border : 1px solid green;
+      
+    }
+    
+  }
+}
