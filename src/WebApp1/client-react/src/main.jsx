@@ -1,13 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import * as mdIcons from 'react-icons/md';
 import App from './App.jsx'
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import About from "./home/About.jsx";
 import NotFoundPage from "./home/NotFoundPage.jsx";
-import Register from "./auth/Register.jsx";
 import Layout from "./home/Layout.jsx";
+import Register from "./auth/Register.jsx";
 
 const router = createBrowserRouter([
     {path:'/', element: <Layout/>, 

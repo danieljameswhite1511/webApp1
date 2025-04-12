@@ -12,7 +12,7 @@ export default function Header() {
                 </span>
             </div>
             <div className="right">
-                <Menu></Menu>
+                
             </div>
         </div>
     )

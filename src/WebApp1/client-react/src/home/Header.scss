@@ -2,7 +2,7 @@
 .header{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   .left{
     display: flex;
     padding: 10px;
@@ -17,5 +17,7 @@
   }
   .right{
     display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 }
