@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.Tasks;
 using Application.ServiceCollectionExtensions;
 using Infrastructure.Identity.Users;
 using Infrastructure.Persistence;
@@ -43,8 +44,36 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("SecretKey")))
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["jwt"];
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context => Task.CompletedTask,
+            OnChallenge = challenge =>
+            {
+               var token= challenge.HttpContext.Request.Headers["Authorization"];
+                return Task.CompletedTask;
+            },
+            OnForbidden = forbidden =>
+            {
+                return Task.CompletedTask;
+            }
+        };
     });
 
+builder.Services.AddCors(options =>
+{
+        options.AddPolicy("CorsPolicy", policy =>
+        {
+            policy.WithOrigins("https://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
+});
 
 var app = builder.Build();
 app.SeedApplicationData();
@@ -56,7 +85,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 app.UseStaticFiles();
 app.UseRouting();
 

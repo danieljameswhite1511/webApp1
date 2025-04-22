@@ -1,24 +1,28 @@
 ﻿using Domain.auth;
 using Domain.Result;
 using Domain.Users;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Identity.Users;
-
 public class AppUserManager : IUserManager<User, int> {
+    
     private readonly UserManager<AppUser> _userManager;
     private readonly ITokenService _tokenService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IWebHostEnvironment _webHostEnvironment;
     
     public AppUserManager(UserManager<AppUser> userManager
         , ITokenService tokenService
-        , IHttpContextAccessor httpContextAccessor)
+        , IHttpContextAccessor httpContextAccessor
+        , IWebHostEnvironment webHostEnvironment)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _httpContextAccessor = httpContextAccessor;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     public async Task<IResult<User>> CreateUserAsync(User user){

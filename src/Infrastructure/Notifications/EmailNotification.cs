@@ -34,7 +34,7 @@ public class EmailNotification: INotification
         message.To.Add(MailboxAddress.Parse(to));
         
         message.Subject = subject;
-        message.Body = new TextPart("plain"){Text = body};
+        message.Body = new TextPart("html"){Text = body};
 
         using var client = new SmtpClient();
         try

@@ -2,15 +2,14 @@
 
 namespace Domain.Users;
 
-public class UserDomainService : IUserDomainService
-{
+public class UserDomainService : IUserDomainService {
+    
     private readonly IUserManager<User, int> _userManager;
     public UserDomainService(IUserManager<User, int> userManager) {
         _userManager = userManager;
     }
     public async Task<IResult<User>> CreateUserAsync(User user) {
         var result = await _userManager.CreateUserAsync(user);
-        
         return result;
     }
     public async Task<User?> GetUserById(int userId) {
@@ -33,14 +32,12 @@ public class UserDomainService : IUserDomainService
         return await _userManager.GenerateEmailConfirmationTokenAsync(userId);
     }
 
-    public async Task<IResult> SignInSpaAsync(string email, string password)
-    {
+    public async Task<IResult> SignInSpaAsync(string email, string password) {
         var result = await _userManager.SignInSpaAsync(email, password);
         return result;
     }
 
-    public async Task<IResult<string>> SignInApiAsync(string email, string password)
-    {
+    public async Task<IResult<string>> SignInApiAsync(string email, string password) {
         return await _userManager.SignInApiAsync(email, password);
     }
 }

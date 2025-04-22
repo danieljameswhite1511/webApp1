@@ -1,44 +1,40 @@
 ﻿
 import Button from "../form-controls/Button.jsx";
-import Input from "../form-controls/Input.jsx";
 import "./Register.scss"
 import Card from "../Card/Card.jsx";
 import {useForm} from "react-hook-form"
-import * as yup from "yup";
 import {yupResolver} from "@hookform/resolvers/yup"
+import authService from "./services/auth.service.js"
+import * as schemas from "../form-validation/schemas.js"
+import {useState} from "react";
+import {useNavigate} from "react-router-dom"   
 
 export default function Register() {
+    const navigate = useNavigate();
+    const [serverErrors, setServerErrors] = useState([]);
     
-    const schema = yup.object(
-        {
-            email: yup.string().email().required("Email is required"),
-            password: yup.string().min(8).required("Password is required"),
-            confirmPassword: yup.string().min(8)
-                .required("Confirm passwords is required")
-                .test("passwordsMatch", "Passwords must match",
-                    function(value) {
-                        return this.resolve(getValues("password") === value);
-                    }),
+        const {
+            register,
+            handleSubmit,
+            formState: { errors , isSubmitting},
+            reset,
+            getValues,
+        } = useForm({
+            resolver: yupResolver(schemas.registerSchema),
+        });
+
+       async function onSubmit(data) {
+           setServerErrors([]);
+           await authService.register(data.email, data.password, data.confirmPassword)
+               .then((response) => {
+                   reset();
+                   navigate("/check-email");
+                   
+               }).catch((errors) => {
+                   setServerErrors(errors);
+               });
         }
-    )
-    
-    const {
-        register,
-        handleSubmit,
-        formState: { errors , isSubmitting},
-        reset,
-        getValues,
-    } = useForm({
-        resolver: yupResolver(schema),
-    });
 
-   async function onSubmit(data) {
-        console.log(data);
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    
     return (
          <>
              <Card>
@@ -72,19 +68,28 @@ export default function Register() {
                                  </Button>
                              </div>
                          </form>
-                         {errors.email && (
-                             <div>{...errors.email.message}</div>
-                         )}
-                         {errors.password && (
-                             <div>{...errors.password.message}</div>
-                         )}
-                         {errors.confirmPassword && (
-                             <div>{...errors.confirmPassword.message}</div>
-                         )}
+                         <div className="client-side-errors">
+                             {errors.email && (
+                                 <div>{...errors.email.message}</div>
+                             )}
+                             {errors.password && (
+                                 <div>{...errors.password.message}</div>
+                             )}
+                             {errors.confirmPassword && (
+                                 <div>{...errors.confirmPassword.message}</div>
+                             )}    
+                         </div>
+                         <div className="server-side-errors">
+                             {serverErrors.length > 0 && 
+                                 serverErrors.map((error, index) => (
+                                     <div key={index}> 
+                                         {error}
+                                     </div>
+                                 ))}
+                         </div>
                      </div>
                  </div>     
              </Card>
-            
         </>
     )
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Users.Dtos;
+using Application.Users.EmailTemplates;
 using Domain.auth;
 using Domain.Notifications;
 using Domain.Result;
@@ -44,6 +45,10 @@ public class UserAppService : IUserAppService {
     }
 
     public async Task<IResult<UserDto>> CreateUser(CreateUserDto createUserDto) {
+
+        if (createUserDto.Password != createUserDto.ConfirmPassword)
+            return Result<UserDto>.Failed("Passwords do not match");
+       
         var user = new User {
             Email = createUserDto.Email,
             Password = createUserDto.Password,
@@ -65,8 +70,8 @@ public class UserAppService : IUserAppService {
             Id = user.Id,
             Name = user.Name,
             Email = user.Email
-
         };
+        
         return Result<UserDto>.Success(userDto);
     }
 
@@ -104,8 +109,10 @@ public class UserAppService : IUserAppService {
             { "userId", user.Id.ToString() },
             { "token", userConfirmationToken.Value }
         };
-        var uri =_uriBuilderService.CreateConfiguredUri("/api/users/verify", urlParams);
-        await _notification.Send(user.Email, user.Email, uri);
+        var uri =_uriBuilderService.CreateConfiguredUri("/confirm-email", urlParams);
+        
+        
+        await _notification.Send(user.Email, user.Email, HtmlTemplates.ConfirmEmailTemplate(uri));
         return Result.Success();
 
     }
