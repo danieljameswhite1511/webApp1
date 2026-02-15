@@ -39,7 +39,7 @@ public class UsersController : ControllerBase{
         return Ok(createUserResult.Value);
     }
 
-    [HttpGet(), Route("verify/{userId?}/{token?}")]
+    [HttpGet, Route("verify/{userId?}/{token?}")]
     public async Task<IActionResult> VerifyUser([FromQuery] int userId, [FromQuery] string token) {
         var result = await _userAppService.ValidateUserEmailToken(userId, token);
         if (!result.Succeeded) return BadRequest(result.Errors);
@@ -47,13 +47,33 @@ public class UsersController : ControllerBase{
     }
 
     [HttpGet, Route("sendVerificationEmail/{email?}")]
-    public async Task<IActionResult> SendVerificationEmail([FromQuery] string? email)
-    {
+    public async Task<IActionResult> SendVerificationEmail([FromQuery] string email) {
         var result = await _userAppService.SendEmailConfirmationToken(email);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok();
     }
 
+    [HttpGet, Route("sendPasswordResetEmail/{email?}")]
+    public async Task<IActionResult> SendPasswordResetEmail([FromQuery] string email) {
+        var result = await _userAppService.SendPasswordResetToken(email);
+        if(!result.Succeeded) return BadRequest(result.Errors);
+        return Ok();
+    }
+
+    [HttpGet, Route("request-password-reset/{email?}/{token?}")]
+    public async Task<IActionResult> RequestPasswordReset([FromQuery] string email, [FromQuery] string token) {
+        var result = await _userAppService.ValidatePasswordResetToken(email, token);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        return Ok();
+    }
+
+    [HttpPost, Route("reset-password")]
+    public async Task<IActionResult> PasswordReset([FromBody] PasswordResetRequest passwordResetRequest) {
+        var result = await _userAppService.ResetPassword(passwordResetRequest.Email, passwordResetRequest.Token, passwordResetRequest.Password);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        return Ok();
+    }
+    
     [HttpPost, Route("sign-in")]
     public async Task<IActionResult> SignInAsync([FromBody] SignInDto signInDto)
     {
@@ -64,8 +84,7 @@ public class UsersController : ControllerBase{
            var spaResult =  await _userAppService.SignInSpaAsync(signInDto);
            if (spaResult.Succeeded) {
                result = Result<string>.Success("");
-           }
-           else {
+           } else {
                result = Result<string>.Failed(spaResult.Errors);
            }
         }
@@ -74,14 +93,10 @@ public class UsersController : ControllerBase{
     }
 
     [HttpGet, Route("is-authenticated")]
-    public async Task<IActionResult> IsAuthenticated()
-    {
-
-        if (Request.HttpContext.User.Identity != null && Request.HttpContext.User.Identity.IsAuthenticated)
-        {
+    public async Task<IActionResult> IsAuthenticated() {
+        if (Request.HttpContext.User.Identity != null && Request.HttpContext.User.Identity.IsAuthenticated) { 
             return Ok(true);
         }
-
         return Unauthorized();
     }
 }

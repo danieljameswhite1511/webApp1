@@ -47,7 +47,7 @@ public class UriBuilderService : IUriBuilderService
         var i = 0;
         foreach (var keyValuePair in queryParams)
         {
-            var encodedValue = Uri.EscapeDataString(keyValuePair.Value);
+            var encodedValue = HttpUtility.UrlEncode(keyValuePair.Value);
             if (i == 0) {
                 uriBuilder.Query = $"?{keyValuePair.Key}={encodedValue}";
             }

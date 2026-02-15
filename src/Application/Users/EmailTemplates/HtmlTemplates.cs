@@ -15,4 +15,18 @@ public class HtmlTemplates
                     </html>
                 """;
     }
+
+    public static string ResetPasswordTemplate(string url)
+    {
+        return $"""
+                    <html>
+                    <head>
+                    </head>
+                        <body>
+                            <p>Click here to reset your password </p>
+                            <a href="{url}">Confirm email</a>
+                        </body>     
+                    </html>
+                """;
+    }
 }

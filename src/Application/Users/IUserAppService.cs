@@ -10,9 +10,12 @@ public interface IUserAppService {
     Task<IResult<UserDto>> CreateUser(CreateUserDto createUserDto); 
     Task<IResult> CreateToken(UserDto userDto);
     Task<IResult> ValidateUserEmailToken(int userId, string token);
+    Task<IResult> ValidatePasswordResetToken(string email, string token);
+    Task<IResult> ResetPassword(string email, string token, string password);
     Task<IResult> SendEmailConfirmationToken(User user);
     Task<IResult> SendEmailConfirmationToken(int userId);
     Task<IResult> SendEmailConfirmationToken(string email);
+    Task<IResult> SendPasswordResetToken(string email);
     
     Task<IResult> SignInSpaAsync(SignInDto signInDto);
     Task<IResult<string>> SignInApiAsync(SignInDto signInDto);

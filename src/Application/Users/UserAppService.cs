@@ -34,10 +34,8 @@ public class UserAppService : IUserAppService {
         };
     }
 
-    public async Task<List<UserDto>?> GetUsers()
-    {
+    public async Task<List<UserDto>?> GetUsers() {
         var users = await _userDomainService.GetUsers();
-
         return users?.Select(x => new UserDto {
             Id = x.Id,
             Name = x.Name
@@ -57,79 +55,95 @@ public class UserAppService : IUserAppService {
         var userCreateResult = await _userDomainService.CreateUserAsync(user);
         if (!userCreateResult.Succeeded) 
             return Result<UserDto>.Failed(userCreateResult.Errors);
-
         user = userCreateResult.Value;
-       
         var emailConfirmationResult = await SendEmailConfirmationToken(user);
-        
         if (!emailConfirmationResult.Succeeded) {
             return Result<UserDto>.Failed(emailConfirmationResult.Errors);
         }
-
         var userDto = new UserDto {
             Id = user.Id,
             Name = user.Name,
             Email = user.Email
         };
-        
         return Result<UserDto>.Success(userDto);
     }
 
-    public async Task<IResult> SendEmailConfirmationToken(int userId)
-    {
+    public async Task<IResult> SendEmailConfirmationToken(int userId) {
         var user = await _userDomainService.GetUserById(userId);
         if (user == null) return Result<User>.Failed();
         return await SendEmailConfirmationToken(user);
     }
     
-    public async Task<IResult> SendEmailConfirmationToken(string email)
-    {
+    public async Task<IResult> SendEmailConfirmationToken(string email) {
         var user = await _userDomainService.GetUserByEmail(email);
         if (user == null) return Result<User>.Failed();
         return await SendEmailConfirmationToken(user);
     }
 
-    public async Task<IResult> SignInSpaAsync(SignInDto signInDto)
-    {
+    public async Task<IResult> SendPasswordResetToken(string email){
+        var user = await _userDomainService.GetUserByEmail(email);
+        if (user == null) return Result<User>.Failed();
+        return await SendPasswordResetToken(user);
+    }
+
+    public async Task<IResult> SignInSpaAsync(SignInDto signInDto) {
         return await _userDomainService.SignInSpaAsync(signInDto.Email, signInDto.Password);
     }
 
-    public async Task<IResult<string>> SignInApiAsync(SignInDto signInDto)
-    {
+    public async Task<IResult<string>> SignInApiAsync(SignInDto signInDto) {
         return await _userDomainService.SignInApiAsync(signInDto.Email, signInDto.Password);
     }
 
-    public async Task<IResult> SendEmailConfirmationToken(User user)
-    {
-        var userConfirmationToken = await _userDomainService.GenerateEmailConfirmationTokenAsync(user.Id);
+    public async Task<IResult> ValidatePasswordResetToken(string email, string token){
+        var result = await _userDomainService.ValidatePasswordResetRequestAsync(email, token);
+        if (!result.Succeeded) {
+            return Result<string>.Failed(result.Errors);
+        }
+        return Result.Success();
+    }
 
+    public async Task<IResult> ResetPassword(string email, string token, string password) {
+        var result = await _userDomainService.ResetPasswordAsync(email, token, password);
+        if (!result.Succeeded)
+            return Result.Failed(result.Errors);
+        return Result.Success();
+    }
+
+    public async Task<IResult> SendEmailConfirmationToken(User user) {
+        var userConfirmationToken = await _userDomainService.GenerateEmailConfirmationTokenAsync(user.Id);
         if (!userConfirmationToken.Succeeded) return Result.Failed(userConfirmationToken.Errors);
-       
         var urlParams = new Dictionary<string, string>() {
             { "userId", user.Id.ToString() },
             { "token", userConfirmationToken.Value }
         };
         var uri =_uriBuilderService.CreateConfiguredUri("/confirm-email", urlParams);
-        
-        
         await _notification.Send(user.Email, user.Email, HtmlTemplates.ConfirmEmailTemplate(uri));
         return Result.Success();
-
     }
+    
+    public async Task<IResult> SendPasswordResetToken(User user) {
+        var userConfirmationToken = await _userDomainService.GeneratePasswordResetTokenAsync(user.Email);
+        if (!userConfirmationToken.Succeeded) return Result.Failed(userConfirmationToken.Errors);
+       var urlParams = new Dictionary<string, string>() {
+            { "email", user.Email },
+            { "token", userConfirmationToken.Value }
+        };
+        var uri =_uriBuilderService.CreateConfiguredUri("/request-password-reset", urlParams);
+        await _notification.Send(user.Email, user.Email, HtmlTemplates.ResetPasswordTemplate(uri));
+        return Result.Success();
+    }
+    
     public async Task<IResult> CreateToken(UserDto userDto) {
         var user = await _userDomainService.GetUserById(userDto.Id);
         if (user == null) return Result<string>.Failed("User not found");
         return Result<string>.Success(_tokenService.GenerateToken(user));
     }
 
-    public async Task<IResult> ValidateUserEmailToken(int userId,  string token)
-    {
+    public async Task<IResult> ValidateUserEmailToken(int userId,  string token) {
         var result = await _userDomainService.ConfirmEmailAsync(userId, token);
-        if (!result.Succeeded)
-        {
+        if (!result.Succeeded) {
             return Result.Failed(result.Errors);
         }
-        
         return Result.Success();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Domain.auth;
 using Domain.Result;
 using Domain.Users;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,21 +11,16 @@ public class AppUserManager : IUserManager<User, int> {
     private readonly UserManager<AppUser> _userManager;
     private readonly ITokenService _tokenService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IWebHostEnvironment _webHostEnvironment;
-    
+
     public AppUserManager(UserManager<AppUser> userManager
         , ITokenService tokenService
-        , IHttpContextAccessor httpContextAccessor
-        , IWebHostEnvironment webHostEnvironment)
-    {
+        , IHttpContextAccessor httpContextAccessor) {
         _userManager = userManager;
         _tokenService = tokenService;
         _httpContextAccessor = httpContextAccessor;
-        _webHostEnvironment = webHostEnvironment;
     }
 
     public async Task<IResult<User>> CreateUserAsync(User user){
-        
         var appuser = new AppUser {
             UserName = user.Email,
             Email = user.Email,
@@ -77,6 +71,34 @@ public class AppUserManager : IUserManager<User, int> {
         }
         return Result<User>.Failed(result.Errors.Select(e => e.Description).ToArray());
     }
+    
+    public async Task<IResult> ValidatePasswordResetRequestAsync(string email, string token) {
+        var appUser = await _userManager.FindByEmailAsync(email);
+        if (appUser == null) return Result<User>.Failed("User not found");
+        var isValid = await _userManager.VerifyUserTokenAsync(
+            appUser, 
+            _userManager.Options.Tokens.PasswordResetTokenProvider, 
+            "ResetPassword", 
+            token);
+        if (isValid) {
+            return Result.Failed("Invalid password reset token");
+        }
+        return Result.Success();
+    }
+
+    public async Task<IResult> ResetPasswordAsync(string email, string token, string password)
+    {
+        var appUser = await _userManager.FindByEmailAsync(email);
+        if (appUser == null) return Result<User>.Failed("User not found");
+        
+        var result = await _userManager.ResetPasswordAsync(appUser, token, password);
+
+        if (!result.Succeeded) {
+            return Result<User>.Failed(result.Errors.Select(e => e.Description).ToArray());
+        } 
+        return Result.Success();
+    }
+    
 
     public async Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId) {
         var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
@@ -103,6 +125,13 @@ public class AppUserManager : IUserManager<User, int> {
         var passwordValid = await _userManager.CheckPasswordAsync(appuser, password);
         if(!passwordValid) return Result<string>.Failed("Invalid password");
         var token = _tokenService.GenerateToken(appuser);
+        return Result<string>.Success(token);
+    }
+
+    public async Task<IResult<string>> GeneratePasswordResetTokenAsync(string email) {
+        var appUser = await _userManager.FindByEmailAsync(email);
+        if (appUser == null) return Result<string>.Failed("User not found");
+        var token = await _userManager.GeneratePasswordResetTokenAsync(appUser);
         return Result<string>.Success(token);
     }
 }

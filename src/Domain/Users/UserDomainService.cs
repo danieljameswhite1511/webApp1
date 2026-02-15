@@ -27,9 +27,22 @@ public class UserDomainService : IUserDomainService {
     public Task<IResult<User>> ConfirmEmailAsync(int userId, string code) {
         return _userManager.ConfirmEmailAsync(userId, code);
     }
+    
+    public Task<IResult> ValidatePasswordResetRequestAsync(string email, string code) {
+        return _userManager.ValidatePasswordResetRequestAsync(email, code);
+    }
+
+    public async Task<IResult> ResetPasswordAsync(string email, string token, string password)
+    {
+        return await _userManager.ResetPasswordAsync(email, token, password);
+    }
 
     public async Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId) {
         return await _userManager.GenerateEmailConfirmationTokenAsync(userId);
+    }
+
+    public async Task<IResult<string>> GeneratePasswordResetTokenAsync(string email) {
+        return await _userManager.GeneratePasswordResetTokenAsync(email);
     }
 
     public async Task<IResult> SignInSpaAsync(string email, string password) {

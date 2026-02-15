@@ -44,30 +44,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("SecretKey")))
         };
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
+        options.Events = new JwtBearerEvents {
+            OnMessageReceived = context => {
                 context.Token = context.Request.Cookies["jwt"];
                 return Task.CompletedTask;
             },
             OnTokenValidated = context => Task.CompletedTask,
-            OnChallenge = challenge =>
-            {
+            OnChallenge = challenge => {
                var token= challenge.HttpContext.Request.Headers["Authorization"];
                 return Task.CompletedTask;
             },
-            OnForbidden = forbidden =>
-            {
+            OnForbidden = forbidden => {
                 return Task.CompletedTask;
             }
         };
     });
 
-builder.Services.AddCors(options =>
-{
-        options.AddPolicy("CorsPolicy", policy =>
-        {
+builder.Services.AddCors(options => {
+        options.AddPolicy("CorsPolicy", policy => {
             policy.WithOrigins("https://localhost:5173")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -79,8 +73,7 @@ var app = builder.Build();
 app.SeedApplicationData();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
+if (!app.Environment.IsDevelopment()) {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }

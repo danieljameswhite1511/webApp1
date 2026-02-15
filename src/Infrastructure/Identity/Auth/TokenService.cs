@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Domain.auth;
 using Domain.Users;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Identity.Auth;
@@ -22,6 +23,7 @@ public class TokenService : ITokenService
         var claims = new List<Claim> {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(CustomClaimTypes.TenantId, user.Email),
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         
