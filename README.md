@@ -3,7 +3,7 @@ webApp1
 
 is multi tenant with personalised sub domains
 progressive web app
-leveraging llm for research and content sumarries
+leveraging llm for research and content sumaries
 Dynamic user configurable, nultimedia content templates
 Dynamic themes and ofcourse "Dark Mode" :)
 clean architecture
