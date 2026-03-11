@@ -7,7 +7,7 @@ leveraging llm for research and content sumaries
 Dynamic user configurable, nultimedia content templates
 Dynamic themes and ofcourse "Dark Mode" :)
 clean architecture
-asp,net identity
+asp,net identity server
 serilog
 cookie and jwt auth
 optimistic concurrency
