@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApp1.Users;
+namespace Application.Users.Dtos;
 
-public class PasswordResetRequest {
+public class PasswordResetRequestDto {
     [Required]
     public string Email { get; set; }
     [Required]
