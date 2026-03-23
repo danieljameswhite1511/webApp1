@@ -26,6 +26,12 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\ApplicationDb\" />
+    <Folder Include="Migrations\IdentityDb\" />
+    <Folder Include="Persistence\Configurations\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

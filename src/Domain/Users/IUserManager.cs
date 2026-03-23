@@ -1,5 +1,6 @@
-﻿using Domain.Entities;
-using Domain.Result;
+﻿using Domain.Common.Entities;
+using Domain.Common.Result;
+using Domain.Users.Entities;
 
 namespace Domain.Users;
 

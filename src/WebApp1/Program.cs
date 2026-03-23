@@ -20,8 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDbContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("default"));
+builder.Services.AddDbContext<IdentityDbContext>(options => {
+    options.UseSqlServer(builder.Configuration.GetConnectionString("identity") );
 });
     
 
@@ -30,7 +30,7 @@ builder.Services.AddIdentityCore<AppUser>(options => {
     options.Password.RequiredLength = 8;
     options.SignIn.RequireConfirmedAccount = false;
     
-}).AddEntityFrameworkStores<ApplicationDbContext>().AddUserValidator<UserEmailValidator>()
+}).AddEntityFrameworkStores<IdentityDbContext>().AddUserValidator<UserEmailValidator>()
 .AddDefaultTokenProviders();
 
 builder.Services.AddHttpContextAccessor();
@@ -70,7 +70,7 @@ builder.Services.AddCors(options => {
 });
 
 var app = builder.Build();
-app.SeedApplicationData();
+app.SeedIdentityData();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {

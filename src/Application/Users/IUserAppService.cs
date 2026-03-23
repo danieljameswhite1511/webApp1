@@ -1,6 +1,6 @@
 ﻿using Application.Users.Dtos;
-using Domain.Result;
-using Domain.Users;
+using Domain.Common.Result;
+using Domain.Users.Entities;
 
 namespace Application.Users;
 

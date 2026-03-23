@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.migrations.Identitydb
 {
     /// <inheritdoc />
-    public partial class Initialcommit : Migration
+    public partial class InitialIdentityDbCommit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

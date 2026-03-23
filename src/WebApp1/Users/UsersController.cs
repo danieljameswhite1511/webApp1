@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Application.Users;
 using Application.Users.Dtos;
-using Domain.Result;
+using Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -68,7 +68,7 @@ public class UsersController : ControllerBase{
     }
 
     [HttpPost, Route("reset-password")]
-    public async Task<IActionResult> PasswordReset([FromBody] PasswordResetRequest passwordResetRequest) {
+    public async Task<IActionResult> PasswordReset([FromBody] PasswordResetRequestDto passwordResetRequest) {
         var result = await _userAppService.ResetPassword(passwordResetRequest.Email, passwordResetRequest.Token, passwordResetRequest.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok();

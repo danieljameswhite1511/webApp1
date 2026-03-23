@@ -1,4 +1,4 @@
-﻿using Domain.Notifications;
+﻿using Domain.Common.Notifications;
 using Infrastructure.Notifications.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;

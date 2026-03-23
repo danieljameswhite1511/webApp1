@@ -6,18 +6,14 @@ namespace Infrastructure.SeedData;
 
 public class SeedData
 {
-    public static void SeedUsers(ApplicationDbContext dbContext)
+    public static void SeedUsers(IdentityDbContext dbContext)
     {
         var userData = File.ReadAllText("../Infrastructure/SeedData/Users.json");
         var userDataList = JsonSerializer.Deserialize<List<AppUser>>(userData);
         
-        foreach (var user in userDataList)
-        {
+        foreach (var user in userDataList) {
             dbContext.Users.Add(user);
         }
-        
         dbContext.SaveChanges();
-        
-        
     }
 }

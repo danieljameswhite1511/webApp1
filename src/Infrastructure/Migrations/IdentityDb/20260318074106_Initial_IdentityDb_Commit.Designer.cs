@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.migrations.Identitydb
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250218221845_Initial commit")]
-    partial class Initialcommit
+    [DbContext(typeof(IdentityDbContext))]
+    [Migration("20260318074106_Initial_IdentityDb_Commit")]
+    partial class InitialIdentityDbCommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

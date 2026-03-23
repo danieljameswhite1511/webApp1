@@ -1,4 +1,4 @@
-﻿namespace Domain.Result;
+﻿namespace Domain.Common.Result;
 
 public interface IResult
 {

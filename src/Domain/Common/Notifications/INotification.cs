@@ -1,4 +1,4 @@
-﻿namespace Domain.Notifications;
+﻿namespace Domain.Common.Notifications;
 
 public interface INotification
 {

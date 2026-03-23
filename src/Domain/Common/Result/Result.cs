@@ -1,4 +1,4 @@
-﻿namespace Domain.Result;
+﻿namespace Domain.Common.Result;
 public class Result<T> : IResult<T> {
     public bool Succeeded { get; set; }
     public string[]? Errors { get; set; }
@@ -8,7 +8,7 @@ public class Result<T> : IResult<T> {
         return result;
     }
     public static IResult<T> Success(T value) {
-        var result =  new Result<T>{Succeeded = true, Value = value};
+        var result = new Result<T>{Succeeded = true, Value = value};
         return result;
     }
 }

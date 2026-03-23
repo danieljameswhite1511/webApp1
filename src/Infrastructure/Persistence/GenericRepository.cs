@@ -1,5 +1,5 @@
-﻿using Domain.Entities;
-using Domain.Repositories;
+﻿using Domain.Common.Entities;
+using Domain.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
@@ -8,9 +8,9 @@ public class GenericRepository<TEntity, TPrimaryKey> : IRepository<TEntity, TPri
     where TEntity : class, IEntity<TPrimaryKey> 
     where TPrimaryKey : IEquatable<TPrimaryKey>
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IdentityDbContext _dbContext;
 
-    public GenericRepository(ApplicationDbContext dbContext) {
+    public GenericRepository(IdentityDbContext dbContext) {
         _dbContext = dbContext;
     }
     

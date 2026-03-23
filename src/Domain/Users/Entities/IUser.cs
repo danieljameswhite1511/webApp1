@@ -1,4 +1,4 @@
-﻿namespace Domain.Users;
+﻿namespace Domain.Users.Entities;
 
 public interface IUser {
      int Id { get; set; }

@@ -1,9 +1,10 @@
 ﻿using Application.Users.Dtos;
 using Application.Users.EmailTemplates;
 using Domain.auth;
-using Domain.Notifications;
-using Domain.Result;
+using Domain.Common.Notifications;
+using Domain.Common.Result;
 using Domain.Users;
+using Domain.Users.Entities;
 using Infrastructure.Urls;
 
 namespace Application.Users;
