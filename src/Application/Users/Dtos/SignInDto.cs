@@ -12,4 +12,9 @@ public class SignInDto
     [Required]
     [Range(1, 2)]
     public SignInMethod SignInMethod { get; set; }
+    
+    [Required] 
+    public int SystemId { get; set; }
+
+    public int? TenantId { get; set; }
 }

@@ -88,11 +88,11 @@ public class UserAppService : IUserAppService {
     }
 
     public async Task<IResult> SignInSpaAsync(SignInDto signInDto) {
-        return await _userDomainService.SignInSpaAsync(signInDto.Email, signInDto.Password);
+        return await _userDomainService.SignInSpaAsync(signInDto.Email, signInDto.Password, signInDto.SystemId,  signInDto.TenantId);
     }
 
     public async Task<IResult<string>> SignInApiAsync(SignInDto signInDto) {
-        return await _userDomainService.SignInApiAsync(signInDto.Email, signInDto.Password);
+        return await _userDomainService.SignInApiAsync(signInDto.Email, signInDto.Password, signInDto.SystemId,  signInDto.TenantId);
     }
 
     public async Task<IResult> ValidatePasswordResetToken(string email, string token){
@@ -137,7 +137,7 @@ public class UserAppService : IUserAppService {
     public async Task<IResult> CreateToken(UserDto userDto) {
         var user = await _userDomainService.GetUserById(userDto.Id);
         if (user == null) return Result<string>.Failed("User not found");
-        return Result<string>.Success(_tokenService.GenerateToken(user));
+        return Result<string>.Success(_tokenService.GenerateToken(user, userDto.SystemId,  userDto.TenantId));
     }
 
     public async Task<IResult> ValidateUserEmailToken(int userId,  string token) {

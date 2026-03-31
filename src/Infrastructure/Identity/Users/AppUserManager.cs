@@ -108,24 +108,24 @@ public class AppUserManager : IUserManager<User, int> {
         return Result<string>.Success(token);
     }
 
-    public async Task<IResult> SignInSpaAsync(string email, string password) {
+    public async Task<IResult> SignInSpaAsync(string email, string password, int systemId, int? tenantId) {
         var appuser = await _userManager.FindByEmailAsync(email);
         if (appuser == null) return Result.Failed("User not found");
         if(!appuser.EmailConfirmed) return Result.Failed("Email confirmation required");
         var passwordValid = await _userManager.CheckPasswordAsync(appuser, password);
         if(!passwordValid) return Result.Failed("Invalid password");
-        var token = _tokenService.GenerateToken(appuser);
+        var token = _tokenService.GenerateToken(appuser, systemId, tenantId);
         _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", token);
         return Result.Success();
     }
 
-    public async Task<IResult<string>> SignInApiAsync(string email, string password) {
+    public async Task<IResult<string>> SignInApiAsync(string email, string password, int systemId, int? tenantId) {
         var appuser = await _userManager.FindByEmailAsync(email);
         if (appuser == null) return Result<string>.Failed("User not found");
         if(!appuser.EmailConfirmed) return Result<string>.Failed("Email confirmation required");
         var passwordValid = await _userManager.CheckPasswordAsync(appuser, password);
         if(!passwordValid) return Result<string>.Failed("Invalid password");
-        var token = _tokenService.GenerateToken(appuser);
+        var token = _tokenService.GenerateToken(appuser, systemId, tenantId);
         return Result<string>.Success(token);
     }
 

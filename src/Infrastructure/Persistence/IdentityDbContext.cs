@@ -4,6 +4,7 @@ using Domain.Systems.Entities.EntityConfigurations;
 using Domain.Tenants.Entities;
 using Domain.Tenants.Entities.EntityConfigurations;
 using Infrastructure.Identity.Users;
+using Infrastructure.Identity.Users.AppUserEntityConfig;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,11 @@ public class IdentityDbContext : IdentityDbContext<AppUser, IdentityRole<int>, i
     }
 
     public DbSet<SystemDefinition> Systems { get; set; } 
+    public DbSet<SystemTenant> SystemTenants { get; set; } 
+    public DbSet<SystemTenantUser> SystemTenantUsers { get; set; } 
+    public DbSet<SystemUser> SystemUsers { get; set; }
+    public DbSet<Tenant> Tenants { get; set; }
+    
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,6 +33,7 @@ public class IdentityDbContext : IdentityDbContext<AppUser, IdentityRole<int>, i
         new SystemTenantEntityConfig().Configure(modelBuilder.Entity<SystemTenant>()); 
         new TenantEntityConfig().Configure(modelBuilder.Entity<Tenant>());
         new SystemTenantUserEntityConfig().Configure(modelBuilder.Entity<SystemTenantUser>());
+        new SystemUserEntityConfig().Configure(modelBuilder.Entity<SystemUser>());
         
         modelBuilder.ConfigureAuditedEntityModelBuilder();
         

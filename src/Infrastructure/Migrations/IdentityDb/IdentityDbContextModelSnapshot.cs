@@ -115,9 +115,6 @@ namespace Infrastructure.migrations.Identitydb
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SystemDefinitionId");
@@ -126,9 +123,7 @@ namespace Infrastructure.migrations.Identitydb
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SystemTenant");
+                    b.ToTable("SystemTenants");
                 });
 
             modelBuilder.Entity("Domain.Systems.Entities.SystemTenantUser", b =>
@@ -180,7 +175,59 @@ namespace Infrastructure.migrations.Identitydb
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SystemTenantUser");
+                    b.ToTable("SystemTenantUsers");
+                });
+
+            modelBuilder.Entity("Domain.Systems.Entities.SystemUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<int>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedDateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("LastModifiedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModifiedDateTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<int>("SystemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SystemId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SystemUsers");
                 });
 
             modelBuilder.Entity("Domain.Tenants.Entities.Tenant", b =>
@@ -237,32 +284,7 @@ namespace Infrastructure.migrations.Identitydb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenant");
-                });
-
-            modelBuilder.Entity("Domain.Users.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
+                    b.ToTable("Tenants");
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.Users.AppUser", b =>
@@ -484,10 +506,6 @@ namespace Infrastructure.migrations.Identitydb
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Users.Entities.User", null)
-                        .WithMany("SystemTenants")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("SystemDefinition");
 
                     b.Navigation("Tenant");
@@ -501,13 +519,32 @@ namespace Infrastructure.migrations.Identitydb
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Users.Entities.User", "User")
+                    b.HasOne("Infrastructure.Identity.Users.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SystemTenant");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Systems.Entities.SystemUser", b =>
+                {
+                    b.HasOne("Domain.Systems.Entities.SystemDefinition", "System")
+                        .WithMany()
+                        .HasForeignKey("SystemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Identity.Users.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("System");
 
                     b.Navigation("User");
                 });
@@ -569,11 +606,6 @@ namespace Infrastructure.migrations.Identitydb
                 });
 
             modelBuilder.Entity("Domain.Tenants.Entities.Tenant", b =>
-                {
-                    b.Navigation("SystemTenants");
-                });
-
-            modelBuilder.Entity("Domain.Users.Entities.User", b =>
                 {
                     b.Navigation("SystemTenants");
                 });

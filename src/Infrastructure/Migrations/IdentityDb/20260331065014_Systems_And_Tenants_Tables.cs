@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.migrations.Identitydb
 {
     /// <inheritdoc />
-    public partial class SystemTables : Migration
+    public partial class SystemsAndTenantsTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace Infrastructure.migrations.Identitydb
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tenant",
+                name: "Tenants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -50,27 +50,44 @@ namespace Infrastructure.migrations.Identitydb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tenant", x => x.Id);
+                    table.PrimaryKey("PK_Tenants", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "SystemUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SystemId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    LastModifiedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
+                    DeletedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
+                    LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
+                    DeletedByUserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_SystemUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SystemUsers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SystemUsers_Systems_SystemId",
+                        column: x => x.SystemId,
+                        principalTable: "Systems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "SystemTenant",
+                name: "SystemTenants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -84,38 +101,32 @@ namespace Infrastructure.migrations.Identitydb
                     LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
                     DeletedByUserId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    SystemDefinitionId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    SystemDefinitionId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SystemTenant", x => x.Id);
+                    table.PrimaryKey("PK_SystemTenants", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SystemTenant_Systems_SystemDefinitionId",
+                        name: "FK_SystemTenants_Systems_SystemDefinitionId",
                         column: x => x.SystemDefinitionId,
                         principalTable: "Systems",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_SystemTenant_Systems_SystemId",
+                        name: "FK_SystemTenants_Systems_SystemId",
                         column: x => x.SystemId,
                         principalTable: "Systems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SystemTenant_Tenant_TenantId",
+                        name: "FK_SystemTenants_Tenants_TenantId",
                         column: x => x.TenantId,
-                        principalTable: "Tenant",
+                        principalTable: "Tenants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SystemTenant_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "SystemTenantUser",
+                name: "SystemTenantUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -132,49 +143,54 @@ namespace Infrastructure.migrations.Identitydb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SystemTenantUser", x => x.Id);
+                    table.PrimaryKey("PK_SystemTenantUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SystemTenantUser_SystemTenant_SystemTenantId",
-                        column: x => x.SystemTenantId,
-                        principalTable: "SystemTenant",
+                        name: "FK_SystemTenantUsers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SystemTenantUser_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
+                        name: "FK_SystemTenantUsers_SystemTenants_SystemTenantId",
+                        column: x => x.SystemTenantId,
+                        principalTable: "SystemTenants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SystemTenant_SystemDefinitionId",
-                table: "SystemTenant",
+                name: "IX_SystemTenants_SystemDefinitionId",
+                table: "SystemTenants",
                 column: "SystemDefinitionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SystemTenant_SystemId",
-                table: "SystemTenant",
+                name: "IX_SystemTenants_SystemId",
+                table: "SystemTenants",
                 column: "SystemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SystemTenant_TenantId",
-                table: "SystemTenant",
+                name: "IX_SystemTenants_TenantId",
+                table: "SystemTenants",
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SystemTenant_UserId",
-                table: "SystemTenant",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SystemTenantUser_SystemTenantId",
-                table: "SystemTenantUser",
+                name: "IX_SystemTenantUsers_SystemTenantId",
+                table: "SystemTenantUsers",
                 column: "SystemTenantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SystemTenantUser_UserId",
-                table: "SystemTenantUser",
+                name: "IX_SystemTenantUsers_UserId",
+                table: "SystemTenantUsers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemUsers_SystemId",
+                table: "SystemUsers",
+                column: "SystemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SystemUsers_UserId",
+                table: "SystemUsers",
                 column: "UserId");
         }
 
@@ -182,19 +198,19 @@ namespace Infrastructure.migrations.Identitydb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "SystemTenantUser");
+                name: "SystemTenantUsers");
 
             migrationBuilder.DropTable(
-                name: "SystemTenant");
+                name: "SystemUsers");
+
+            migrationBuilder.DropTable(
+                name: "SystemTenants");
 
             migrationBuilder.DropTable(
                 name: "Systems");
 
             migrationBuilder.DropTable(
-                name: "Tenant");
-
-            migrationBuilder.DropTable(
-                name: "User");
+                name: "Tenants");
         }
     }
 }

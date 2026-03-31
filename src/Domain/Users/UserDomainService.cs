@@ -46,12 +46,12 @@ public class UserDomainService : IUserDomainService {
         return await _userManager.GeneratePasswordResetTokenAsync(email);
     }
 
-    public async Task<IResult> SignInSpaAsync(string email, string password) {
-        var result = await _userManager.SignInSpaAsync(email, password);
+    public async Task<IResult> SignInSpaAsync(string email, string password, int systemId, int? tenantId) {
+        var result = await _userManager.SignInSpaAsync(email, password, systemId, tenantId);
         return result;
     }
 
-    public async Task<IResult<string>> SignInApiAsync(string email, string password) {
-        return await _userManager.SignInApiAsync(email, password);
+    public async Task<IResult<string>> SignInApiAsync(string email, string password,  int systemId, int? tenantId) {
+        return await _userManager.SignInApiAsync(email, password,  systemId, tenantId);
     }
 }

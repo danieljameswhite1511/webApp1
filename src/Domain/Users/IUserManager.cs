@@ -11,8 +11,8 @@ public interface  IUserManager<TUser, TPrimaryKey> where TUser : IEntity<TPrimar
     Task<List<TUser>?> GetUsersAsync();
     Task<IResult<TUser>> ConfirmEmailAsync(TPrimaryKey userId, string code);
     Task<IResult<string>> GenerateEmailConfirmationTokenAsync(TPrimaryKey userId);
-    Task<IResult> SignInSpaAsync(string email, string password);
-    Task<IResult<string>> SignInApiAsync(string email, string password);
+    Task<IResult> SignInSpaAsync(string email, string password, int systemId, int? tenantId);
+    Task<IResult<string>> SignInApiAsync(string email, string password, int systemId, int? tenantId);
     Task<IResult<string>>  GeneratePasswordResetTokenAsync(string email);
     Task<IResult> ValidatePasswordResetRequestAsync(string email, string token);
     Task<IResult> ResetPasswordAsync(string email, string token, string password);

@@ -17,13 +17,18 @@ public class TokenService : ITokenService
         _secretKey = System.Text.Encoding.UTF8.GetBytes(_configuration["SecretKey"]);
     } 
     
-    public string GenerateToken(IUser user)
+    public string GenerateToken(IUser user, int systemId, int? tenantId)
     {
         var claims = new List<Claim> {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(CustomClaimTypes.TenantId, user.Email),
+            new Claim(CustomClaimTypes.SystemId, systemId.ToString()),
         };
+
+        if (tenantId.HasValue) {
+            claims.Add(new Claim(CustomClaimTypes.TenantId, tenantId.Value.ToString()));
+        }
+        
         var tokenHandler = new JwtSecurityTokenHandler();
         
         var tokenDescriptor = new SecurityTokenDescriptor {
