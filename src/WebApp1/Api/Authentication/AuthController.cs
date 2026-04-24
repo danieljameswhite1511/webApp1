@@ -1,75 +1,60 @@
 ﻿using System.Threading.Tasks;
-using Application.Users;
+using Application.Auth;
 using Application.Users.Dtos;
 using Domain.Common.Result;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-namespace WebApp1.Users;
+namespace WebApp1.Api.Authentication;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase{
-    
-    private readonly ILogger<UsersController> _logger;
-    private readonly IUserAppService _userAppService;
+public class AuthController : ControllerBase
+{
+    private readonly IAuthAppService _authAppService;
 
-    public UsersController(ILogger<UsersController> logger
-        , IUserAppService userAppService) {
-        _logger = logger;
-        _userAppService = userAppService;
+    public AuthController(IAuthAppService authAppService)
+    {
+        _authAppService = authAppService;
     }
 
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> Get(int userId) {
-        return Ok( await _userAppService.GetUser(1));
-    }
-
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> GetAll() {
-        return Ok(await _userAppService.GetUsers());
-    }
-
-    [HttpPost]
+    [HttpPost, Route("create-user")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserDto createUserDto) {
-        var createUserResult = await _userAppService.CreateUser(createUserDto);
+        var createUserResult = await _authAppService.CreateUser(createUserDto);
         if (!createUserResult.Succeeded) return BadRequest(createUserResult.Errors);
         return Ok(createUserResult.Value);
     }
 
     [HttpGet, Route("verify/{userId?}/{token?}")]
     public async Task<IActionResult> VerifyUser([FromQuery] int userId, [FromQuery] string token) {
-        var result = await _userAppService.ValidateUserEmailToken(userId, token);
+        var result = await _authAppService.ValidateUserEmailToken(userId, token);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok(true);
     }
 
     [HttpGet, Route("sendVerificationEmail/{email?}")]
     public async Task<IActionResult> SendVerificationEmail([FromQuery] string email) {
-        var result = await _userAppService.SendEmailConfirmationToken(email);
+        var result = await _authAppService.SendEmailConfirmationToken(email);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok();
     }
 
     [HttpGet, Route("sendPasswordResetEmail/{email?}")]
     public async Task<IActionResult> SendPasswordResetEmail([FromQuery] string email) {
-        var result = await _userAppService.SendPasswordResetToken(email);
+        var result = await _authAppService.SendPasswordResetToken(email);
         if(!result.Succeeded) return BadRequest(result.Errors);
         return Ok();
     }
 
     [HttpGet, Route("request-password-reset/{email?}/{token?}")]
     public async Task<IActionResult> RequestPasswordReset([FromQuery] string email, [FromQuery] string token) {
-        var result = await _userAppService.ValidatePasswordResetToken(email, token);
+        var result = await _authAppService.ValidatePasswordResetToken(email, token);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok();
     }
 
     [HttpPost, Route("reset-password")]
     public async Task<IActionResult> PasswordReset([FromBody] PasswordResetRequestDto passwordResetRequest) {
-        var result = await _userAppService.ResetPassword(passwordResetRequest.Email, passwordResetRequest.Token, passwordResetRequest.Password);
+        var result = await _authAppService.ResetPassword(passwordResetRequest.Email, passwordResetRequest.Token, passwordResetRequest.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok();
     }
@@ -79,9 +64,9 @@ public class UsersController : ControllerBase{
     {
         IResult<string> result;
         if (signInDto.SignInMethod == SignInMethod.Api) {
-            result = await _userAppService.SignInApiAsync(signInDto);    
+            result = await _authAppService.SignInApiAsync(signInDto);    
         } else {
-           var spaResult =  await _userAppService.SignInSpaAsync(signInDto);
+           var spaResult =  await _authAppService.SignInSpaAsync(signInDto);
            if (spaResult.Succeeded) {
                result = Result<string>.Success("");
            } else {

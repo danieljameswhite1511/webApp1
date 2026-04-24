@@ -1,6 +1,6 @@
 ﻿using Domain.Users.Entities;
 
-namespace Domain.auth;
+namespace Domain.auth.Services;
 
 public interface ITokenService
 {

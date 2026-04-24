@@ -24,4 +24,11 @@
 
     
 
+    <ItemGroup>
+      <Folder Include="Auth\" />
+      <Folder Include="Users\" />
+    </ItemGroup>
+
+    
+
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Domain.auth;
+using Domain.auth.Services;
 using Domain.Common.Result;
 using Domain.Users;
 using Domain.Users.Entities;
@@ -21,19 +22,16 @@ public class AppUserManager : IUserManager<User, int> {
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<IResult<User>> CreateUserAsync(User user){
-        var appuser = new AppUser {
-            UserName = user.Email,
-            Email = user.Email,
-        };
-        
-        var identityResult = await _userManager.CreateAsync(appuser, user.Password);
-        if (identityResult.Succeeded) {
-            user.Id = appuser.Id;
-            return Result<User>.Success(user);
-        }
-        return Result<User>.Failed(identityResult.Errors.Select(e => e.Description).ToArray());
-    }
+  
+    
+    public async Task<List<User>?> GetUsersAsync() {
+             var users = await _userManager.Users.ToListAsync();
+             return users.Select(x => new User {
+                 Id = x.Id,
+                 Name = x.UserName
+             }).ToList();
+         }
+
 
     public async Task<User?> GetUserByIdAsync(int id) {
         var appUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Id.Equals(id));
@@ -54,14 +52,20 @@ public class AppUserManager : IUserManager<User, int> {
             Email = appUser.Email,
         };
     }
-
-    public async Task<List<User>?> GetUsersAsync() {
-        var users = await _userManager.Users.ToListAsync();
-        return users.Select(x => new User {
-            Id = x.Id,
-            Name = x.UserName
-        }).ToList();
-    }
+    
+    public async Task<IResult<User>> CreateUserAsync(User user){
+        var appuser = new AppUser {
+            UserName = user.Email,
+            Email = user.Email,
+        };
+        
+        var identityResult = await _userManager.CreateAsync(appuser, user.Password);
+        if (identityResult.Succeeded) {
+            user.Id = appuser.Id;
+            return Result<User>.Success(user);
+        }
+        return Result<User>.Failed(identityResult.Errors.Select(e => e.Description).ToArray());
+    }    
 
     public async Task<IResult<User>> ConfirmEmailAsync(int userId, string code) {
         var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));

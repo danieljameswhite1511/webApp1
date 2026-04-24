@@ -1,4 +1,5 @@
 ﻿using Domain.auth;
+using Domain.auth.Services;
 using Domain.Common.Notifications;
 using Domain.Common.Repositories;
 using Domain.Users;
