@@ -17,6 +17,7 @@ using WebApp1;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.AddApplicationConfig();
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
