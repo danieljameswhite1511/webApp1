@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Application.Users;
-using Application.Users.Dtos;
-using Domain.Common.Result;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -22,8 +21,8 @@ public class UsersController : ControllerBase{
     }
 
     [HttpGet("{userId}")]
-    public async Task<IActionResult> Get(int userId) {
-        return Ok( await _userAppService.GetUser(1));
+    public async Task<IActionResult> Get(Guid userId) {
+        return Ok( await _userAppService.GetUser(userId));
     }
 
     [HttpGet]

@@ -2,7 +2,8 @@
 
 namespace Domain.auth.Services;
 
-public interface ITokenService
+public interface IAsymmetricTokenService
 {
     string GenerateToken(IUser user, int systemId, int? tenantId);
+    string GetPublicKeyPem();
 }

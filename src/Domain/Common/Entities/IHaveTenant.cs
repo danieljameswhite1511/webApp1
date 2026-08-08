@@ -2,5 +2,5 @@
 
 public interface IHaveTenant
 {
-    int TenantId { get; set; }
+    Guid TenantId { get; set; }
 }

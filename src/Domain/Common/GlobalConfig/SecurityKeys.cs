@@ -2,6 +2,5 @@
 
 public class SecurityKeys
 {
-    public string SymmetricKey { get; set; }
-    public string AsymmetricKey { get; set; }
+    public string SymmetricKey { get; set; } = string.Empty;
 }

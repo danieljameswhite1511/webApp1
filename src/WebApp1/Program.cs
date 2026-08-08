@@ -1,6 +1,8 @@
-using System.Text;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Application.ServiceCollectionExtensions;
+using Domain.auth.Services;
+using Domain.Common.GlobalConfig;
 using Infrastructure.Identity.Users;
 using Infrastructure.Persistence;
 using Infrastructure.ServiceCollectionExtension;
@@ -34,9 +36,53 @@ builder.Services.AddIdentityCore<AppUser>(options => {
 }).AddEntityFrameworkStores<IdentityDbContext>().AddUserValidator<UserEmailValidator>()
 .AddDefaultTokenProviders();
 
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.Configure<SecurityKeys>(builder.Configuration.GetSection("SecurityKeys"));
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        // Resolve AsymmetricTokenService from IoC container to get the Public Key
+        using var serviceProvider = builder.Services.BuildServiceProvider();
+        var tokenService = serviceProvider.GetRequiredService<IAsymmetricTokenService>();
+        
+        // Export public key and create RsaSecurityKey for verification
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(tokenService.GetPublicKeyPem());
+        var publicKey = new RsaSecurityKey(rsa);
+
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtSettings?.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtSettings?.Audience,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = publicKey // <--- Using RSA Public Key instead of Symmetric key
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // Pull token from cookie if present, otherwise fallback to Authorization header
+                if (context.Request.Cookies.TryGetValue("jwt", out var token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+/*
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => { options.TokenValidationParameters = new TokenValidationParameters {
             ValidateIssuer = false,
@@ -60,6 +106,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
+    */
 
 builder.Services.AddCors(options => {
         options.AddPolicy("CorsPolicy", policy => {

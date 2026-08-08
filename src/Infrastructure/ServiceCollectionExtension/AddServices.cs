@@ -1,5 +1,4 @@
-﻿using Domain.auth;
-using Domain.auth.Services;
+﻿using Domain.auth.Services;
 using Domain.Common.Notifications;
 using Domain.Common.Repositories;
 using Domain.Users;
@@ -15,10 +14,13 @@ namespace Infrastructure.ServiceCollectionExtension;
 
 public static class InfrastructureServices {
     public static void AddInfrastructureServices(this IServiceCollection services) {
-        services.AddScoped<IUserManager<User, int>, AppUserManager>();
+        services.AddScoped<IUserManager<User, Guid>, AppUserManager>();
+        services.AddScoped<IUserService<User, Guid>, AppUserService>();
         services.AddScoped(typeof(IRepository<,>), typeof(GenericRepository<,>));
         services.AddScoped<IUserDomainService, UserDomainService>();
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthDomainService, AuthDomainService>();
+        services.AddScoped<ISymmetricTokenService, SymmetricTokenService>();
+        services.AddScoped<IAsymmetricTokenService, AsymmetricTokenService>();
         services.AddScoped<INotification, EmailNotification>();
         services.AddScoped<IUriBuilderService, UriBuilderService>();
     }

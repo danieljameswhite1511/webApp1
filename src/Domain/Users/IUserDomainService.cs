@@ -1,20 +1,9 @@
-﻿using Domain.Common.Result;
-using Domain.Users.Entities;
+﻿using Domain.Users.Entities;
 
 namespace Domain.Users;
 
 public interface IUserDomainService {
-    
-    Task<User?> GetUserById(int userId);
+    Task<User?> GetUserById(Guid userId);
     Task<User?> GetUserByEmail(string email);
     Task<List<User>?> GetUsers();
-    Task<IResult<User>> CreateUserAsync(User user);
-    Task<IResult<User>> ConfirmEmailAsync(int userId, string token);
-    Task<IResult> ValidatePasswordResetRequestAsync(string email, string code);
-    Task<IResult> ResetPasswordAsync(string email, string token,string password);
-    Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId);
-    Task<IResult<string>>  GeneratePasswordResetTokenAsync(string email);
-    Task<IResult> SignInSpaAsync(string email, string password, int systemId, int? tenantId);
-    Task<IResult<string>> SignInApiAsync(string email, string password, int systemId, int? tenantId);
-    
 }

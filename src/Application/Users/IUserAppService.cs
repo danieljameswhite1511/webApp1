@@ -3,7 +3,7 @@
 namespace Application.Users;
 
 public interface IUserAppService {
-    Task<UserDto?> GetUser(int id);
+    Task<UserDto?> GetUser(Guid id);
     Task<List<UserDto>?> GetUsers();
    
 }

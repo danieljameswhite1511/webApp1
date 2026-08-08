@@ -1,28 +1,26 @@
-﻿using Domain.auth;
-using Domain.auth.Services;
+﻿using Domain.auth.Services;
 using Domain.Common.Result;
 using Domain.Users;
 using Domain.Users.Entities;
+using Infrastructure.Identity.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Identity.Users;
-public class AppUserManager : IUserManager<User, int> {
+namespace Infrastructure.Identity.Auth;
+public class AppUserManager : IUserManager<User, Guid> {
     
     private readonly UserManager<AppUser> _userManager;
-    private readonly ITokenService _tokenService;
+    private readonly IAsymmetricTokenService _tokenService;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AppUserManager(UserManager<AppUser> userManager
-        , ITokenService tokenService
+        , IAsymmetricTokenService tokenService
         , IHttpContextAccessor httpContextAccessor) {
         _userManager = userManager;
         _tokenService = tokenService;
         _httpContextAccessor = httpContextAccessor;
     }
-
-  
     
     public async Task<List<User>?> GetUsersAsync() {
              var users = await _userManager.Users.ToListAsync();
@@ -30,10 +28,9 @@ public class AppUserManager : IUserManager<User, int> {
                  Id = x.Id,
                  Name = x.UserName
              }).ToList();
-         }
+    }
 
-
-    public async Task<User?> GetUserByIdAsync(int id) {
+    public async Task<User?> GetUserByIdAsync(Guid id) {
         var appUser = await _userManager.Users.FirstOrDefaultAsync(x => x.Id.Equals(id));
         if (appUser == null) return null;
         return new User {
@@ -67,7 +64,7 @@ public class AppUserManager : IUserManager<User, int> {
         return Result<User>.Failed(identityResult.Errors.Select(e => e.Description).ToArray());
     }    
 
-    public async Task<IResult<User>> ConfirmEmailAsync(int userId, string code) {
+    public async Task<IResult<User>> ConfirmEmailAsync(Guid userId, string code) {
         var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
         if (appUser == null) return Result<User>.Failed("User not found");
         var result = await _userManager.ConfirmEmailAsync(appUser, code);
@@ -105,7 +102,7 @@ public class AppUserManager : IUserManager<User, int> {
     }
     
 
-    public async Task<IResult<string>> GenerateEmailConfirmationTokenAsync(int userId) {
+    public async Task<IResult<string>> GenerateEmailConfirmationTokenAsync(Guid userId) {
         var appUser = await _userManager.Users.SingleOrDefaultAsync(x => x.Id.Equals(userId));
         if (appUser == null) return Result<string>.Failed("User not found");
         var token= await _userManager.GenerateEmailConfirmationTokenAsync(appUser);

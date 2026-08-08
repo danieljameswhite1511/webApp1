@@ -1,21 +1,21 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Domain.auth;
 using Domain.auth.Services;
+using Domain.Common.GlobalConfig;
 using Domain.Users.Entities;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Identity.Auth;
 
-public class TokenService : ITokenService
+public class SymmetricTokenService : ISymmetricTokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly SecurityKeys _securityKeys;
     private readonly Byte[] _secretKey;
-    public TokenService(IConfiguration configuration)
+    public SymmetricTokenService(IOptions<SecurityKeys> configuration)
     {
-        _configuration = configuration;
-        _secretKey = System.Text.Encoding.UTF8.GetBytes(_configuration["SecretKey"]);
+        _securityKeys = configuration.Value;
+        _secretKey = System.Text.Encoding.UTF8.GetBytes(_securityKeys.SymmetricKey);
     } 
     
     public string GenerateToken(IUser user, int systemId, int? tenantId)

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.migrations.Identitydb
+namespace Infrastructure.Migrations.identitydb
 {
     /// <inheritdoc />
     public partial class SystemsAndTenantsTables : Migration
@@ -15,15 +15,14 @@ namespace Infrastructure.migrations.Identitydb
                 name: "Systems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     LastModifiedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
                     DeletedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
-                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
-                    LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
-                    DeletedByUserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
@@ -35,15 +34,14 @@ namespace Infrastructure.migrations.Identitydb
                 name: "Tenants",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     LastModifiedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
                     DeletedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
-                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
-                    LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
-                    DeletedByUserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     DisplayName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     UriName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
@@ -57,17 +55,16 @@ namespace Infrastructure.migrations.Identitydb
                 name: "SystemUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SystemId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     LastModifiedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
                     DeletedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
-                    LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
-                    DeletedByUserId = table.Column<int>(type: "int", nullable: false)
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,18 +87,17 @@ namespace Infrastructure.migrations.Identitydb
                 name: "SystemTenants",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SystemId = table.Column<int>(type: "int", nullable: false),
-                    TenantId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SystemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     LastModifiedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
                     DeletedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
-                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
-                    LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
-                    DeletedByUserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    SystemDefinitionId = table.Column<int>(type: "int", nullable: true)
+                    SystemDefinitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -129,16 +125,15 @@ namespace Infrastructure.migrations.Identitydb
                 name: "SystemTenantUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SystemTenantId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SystemTenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDateTime = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     LastModifiedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
                     DeletedDateTime = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "getdate()"),
-                    CreatedByUserId = table.Column<int>(type: "int", nullable: false),
-                    LastModifiedByUserId = table.Column<int>(type: "int", nullable: false),
-                    DeletedByUserId = table.Column<int>(type: "int", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DeletedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>

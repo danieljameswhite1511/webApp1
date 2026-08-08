@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Application.Auth;
 using Application.Users.Dtos;
 using Domain.Common.Result;
@@ -25,7 +26,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet, Route("verify/{userId?}/{token?}")]
-    public async Task<IActionResult> VerifyUser([FromQuery] int userId, [FromQuery] string token) {
+    public async Task<IActionResult> VerifyUser([FromQuery] Guid userId, [FromQuery] string token) {
         var result = await _authAppService.ValidateUserEmailToken(userId, token);
         if (!result.Succeeded) return BadRequest(result.Errors);
         return Ok(true);

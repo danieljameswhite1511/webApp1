@@ -3,6 +3,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Identity.Users;
 
-public class AppUser :  IdentityUser<int>, IUser {
+public class AppUser :  IdentityUser<Guid>, IUser {
     
 }

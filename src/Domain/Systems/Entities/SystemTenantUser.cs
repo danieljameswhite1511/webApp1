@@ -3,17 +3,17 @@ using Domain.Users.Entities;
 
 namespace Domain.Systems.Entities;
 
-public class SystemTenantUser : IAuditedEntity<int, int> {
-    public int Id { get; }
-    public int SystemTenantId { get; set; }
+public class SystemTenantUser : IAuditedEntity<Guid, Guid> {
+    public Guid Id { get; }
+    public Guid SystemTenantId { get; set; }
     public SystemTenant SystemTenant { get; set; }
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     public IUser User { get; set; }
     public DateTime CreatedDateTime { get; set; }
     public DateTime? LastModifiedDateTime { get; set; }
     public DateTime? DeletedDateTime { get; set; }
-    public int CreatedByUserId { get; set; }
-    public int LastModifiedByUserId { get; set; }
-    public int DeletedByUserId { get; set; }
+    public Guid CreatedByUserId { get; set; }
+    public Guid LastModifiedByUserId { get; set; }
+    public Guid DeletedByUserId { get; set; }
     public bool IsDeleted { get; set; }
 }

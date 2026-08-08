@@ -9,17 +9,23 @@ using Infrastructure.Urls;
 
 namespace Application.Auth;
 
-public class AuthAppService
+public class AuthAppService : IAuthAppService
 {
-    private readonly ITokenService _tokenService;
+    private readonly IAsymmetricTokenService _tokenService;
     private readonly INotification _notification;
     private readonly IUriBuilderService _uriBuilderService;
+    private readonly IAuthDomainService _authDomainService;
     private readonly IUserDomainService _userDomainService;
 
-    public AuthAppService( ITokenService tokenService, INotification notification, IUriBuilderService uriBuilderService, IUserDomainService userDomainService)
+    public AuthAppService( IAsymmetricTokenService tokenService, 
+        INotification notification, 
+        IUriBuilderService uriBuilderService, 
+        IUserDomainService userDomainService, 
+        IAuthDomainService authDomainService)
     {
         _uriBuilderService = uriBuilderService;
         _userDomainService = userDomainService;
+        _authDomainService = authDomainService;
         _tokenService = tokenService;
         _notification = notification;
     }
@@ -35,7 +41,7 @@ public class AuthAppService
             Password = createUserDto.Password,
         };
 
-        var userCreateResult = await _userDomainService.CreateUserAsync(user);
+        var userCreateResult = await _authDomainService.CreateUserAsync(user);
         if (!userCreateResult.Succeeded) 
             return Result<UserDto>.Failed(userCreateResult.Errors);
         user = userCreateResult.Value;
@@ -51,7 +57,7 @@ public class AuthAppService
         return Result<UserDto>.Success(userDto);
     }
 
-    public async Task<IResult> SendEmailConfirmationToken(int userId) {
+    public async Task<IResult> SendEmailConfirmationToken(Guid userId) {
         var user = await _userDomainService.GetUserById(userId);
         if (user == null) return Result<User>.Failed();
         return await SendEmailConfirmationToken(user);
@@ -70,15 +76,15 @@ public class AuthAppService
     }
 
     public async Task<IResult> SignInSpaAsync(SignInDto signInDto) {
-        return await _userDomainService.SignInSpaAsync(signInDto.Email, signInDto.Password, signInDto.SystemId,  signInDto.TenantId);
+        return await _authDomainService.SignInSpaAsync(signInDto.Email, signInDto.Password, signInDto.SystemId,  signInDto.TenantId);
     }
 
     public async Task<IResult<string>> SignInApiAsync(SignInDto signInDto) {
-        return await _userDomainService.SignInApiAsync(signInDto.Email, signInDto.Password, signInDto.SystemId,  signInDto.TenantId);
+        return await _authDomainService.SignInApiAsync(signInDto.Email, signInDto.Password, signInDto.SystemId,  signInDto.TenantId);
     }
 
     public async Task<IResult> ValidatePasswordResetToken(string email, string token){
-        var result = await _userDomainService.ValidatePasswordResetRequestAsync(email, token);
+        var result = await _authDomainService.ValidatePasswordResetRequestAsync(email, token);
         if (!result.Succeeded) {
             return Result<string>.Failed(result.Errors);
         }
@@ -86,14 +92,14 @@ public class AuthAppService
     }
 
     public async Task<IResult> ResetPassword(string email, string token, string password) {
-        var result = await _userDomainService.ResetPasswordAsync(email, token, password);
+        var result = await _authDomainService.ResetPasswordAsync(email, token, password);
         if (!result.Succeeded)
             return Result.Failed(result.Errors);
         return Result.Success();
     }
 
     public async Task<IResult> SendEmailConfirmationToken(User user) {
-        var userConfirmationToken = await _userDomainService.GenerateEmailConfirmationTokenAsync(user.Id);
+        var userConfirmationToken = await _authDomainService.GenerateEmailConfirmationTokenAsync(user.Id);
         if (!userConfirmationToken.Succeeded) return Result.Failed(userConfirmationToken.Errors);
         var urlParams = new Dictionary<string, string>() {
             { "userId", user.Id.ToString() },
@@ -105,7 +111,7 @@ public class AuthAppService
     }
     
     public async Task<IResult> SendPasswordResetToken(User user) {
-        var userConfirmationToken = await _userDomainService.GeneratePasswordResetTokenAsync(user.Email);
+        var userConfirmationToken = await _authDomainService.GeneratePasswordResetTokenAsync(user.Email);
         if (!userConfirmationToken.Succeeded) return Result.Failed(userConfirmationToken.Errors);
        var urlParams = new Dictionary<string, string>() {
             { "email", user.Email },
@@ -122,8 +128,8 @@ public class AuthAppService
         return Result<string>.Success(_tokenService.GenerateToken(user, userDto.SystemId,  userDto.TenantId));
     }
 
-    public async Task<IResult> ValidateUserEmailToken(int userId,  string token) {
-        var result = await _userDomainService.ConfirmEmailAsync(userId, token);
+    public async Task<IResult> ValidateUserEmailToken(Guid userId,  string token) {
+        var result = await _authDomainService.ConfirmEmailAsync(userId, token);
         if (!result.Succeeded) {
             return Result.Failed(result.Errors);
         }

@@ -12,7 +12,7 @@ public class UserAppService : IUserAppService {
         
     }
 
-    public async Task<UserDto?> GetUser(int id) {
+    public async Task<UserDto?> GetUser(Guid id) {
         var user = await _userDomainService.GetUserById(id);
         if (user == null) return null;
         return new UserDto {

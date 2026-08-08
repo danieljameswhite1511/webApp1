@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Auth\" />
     <Folder Include="Migrations\ApplicationDb\" />
     <Folder Include="Migrations\IdentityDb\" />
     <Folder Include="Persistence\Configurations\" />
